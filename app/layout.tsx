@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
-
 import { ClerkProvider } from '@clerk/nextjs';
+
+import ModalProvider from '@/providers/modal-provider';
 
 import './globals.css';
 
@@ -24,7 +25,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={poppins.className}>{children}</body>
+        <body className={poppins.className}>
+          <ModalProvider />
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );
