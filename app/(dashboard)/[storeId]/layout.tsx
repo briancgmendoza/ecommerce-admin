@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import prismadb from "@/lib/prismadb";
+import Navbar from "@/components/navbar";
 
 import { IDashboardLayoutProps } from "./interface";
 
@@ -24,7 +25,7 @@ const DashboardLayout: React.FC<IDashboardLayoutProps> = async ({
 
     return (
         <>
-            <div>This is Navbar</div>
+            <Navbar />
             {children}
         </>
     );
