@@ -16,3 +16,10 @@ export interface IApiAlertProps {
     description: string;
     variant: "public" | "admin";
 }
+
+export interface IImageUploadProps {
+    disabled?: boolean;
+    onChange: (value: string) => void;
+    onRemove: (value: string) => void;
+    value: string[];
+}

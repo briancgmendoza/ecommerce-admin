@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import ImageUpload from "@/components/ui/image-upload";
 import ApiAlert from "@/components/ui/api-alert";
 import {
     Form,
@@ -25,34 +26,48 @@ import {
     FormMessage
 } from "@/components/ui/form";
 
-import { ISettingsFormProps } from "./interface";
+import { IBillboardFormProps } from "./interface";
 
 const formSchema = z.object({
-    name: z.string().min(1)
+    label: z.string().min(1),
+    imageUrl: z.string().min(1)
 });
 
-type SettingsFormValues = z.infer<typeof formSchema>;
+type BillboardFormValues = z.infer<typeof formSchema>;
 
-const SettingsForm: React.FC<ISettingsFormProps> = ({
+const BillboardForm: React.FC<IBillboardFormProps> = ({
     initialData
-}: ISettingsFormProps) => {
+}: IBillboardFormProps) => {
     const params = useParams();
     const router = useRouter();
     const origin = useOrigin();
     const [open, setOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const form = useForm<SettingsFormValues>({
+    const title = initialData ? "Edit billboard" : "Create billboard";
+    const description = initialData ? "Edit billboard" : "Add a new billboard";
+    const toastMessage = initialData ? "Billboard updated." : "Billboard created.";
+    const action = initialData ? "Save changes" : "Create";
+
+    const form = useForm<BillboardFormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData
+        defaultValues: initialData || {
+            label: '',
+            imageUrl: ''
+        }
     });
 
-    const onSubmit = async (data: SettingsFormValues) => {
+    const onSubmit = async (data: BillboardFormValues) => {
         try {
             setLoading(true);
-            await axios.patch(`/api/stores/${params.storeId}`, data);
+            if (initialData) {
+                await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data);
+            } else {
+                await axios.post(`/api/${params.storeId}/billboards`, data);
+            }
             router.refresh();
-            toast.success("Store updated.");
+            router.push(`/${params.storeId}/billboards`);
+            toast.success(toastMessage);
         } catch (error) {
             toast.error("Something went wrong");
         } finally {
@@ -63,12 +78,12 @@ const SettingsForm: React.FC<ISettingsFormProps> = ({
     const onDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/stores/${params.storeId}`);
+            await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`);
             router.refresh();
             router.push("/");
-            toast.success("Store deleted.");
+            toast.success("Billboard deleted.");
         } catch (error) {
-            toast.error("Make sure you removed all products and categories first.");
+            toast.error("Make sure you removed all categories using this billboard first.");
         } finally {
             setLoading(false);
             setOpen(false);
@@ -85,17 +100,19 @@ const SettingsForm: React.FC<ISettingsFormProps> = ({
             />
             <div className="flex items-center justify-between">
                 <Heading
-                    title="Settings"
-                    description="Manage store preferences"
+                    title={title}
+                    description={description}
                 />
-                <Button
-                    disabled={loading}
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setOpen(true)}
-                >
-                    <Trash className="h-4 w-4" />
-                </Button>
+                {initialData && (
+                    <Button
+                        disabled={loading}
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setOpen(true)}
+                    >
+                        <Trash className="h-4 w-4" />
+                    </Button>
+                )}
             </div>
             <Separator />
             <Form {...form}>
@@ -103,17 +120,35 @@ const SettingsForm: React.FC<ISettingsFormProps> = ({
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-8 w-full"
                 >
+                    <FormField
+                        control={form.control}
+                        name="imageUrl"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Background image</FormLabel>
+                                <FormControl>
+                                    <ImageUpload
+                                        value={field.value ? [field.value] : []}
+                                        disabled={loading}
+                                        onChange={(url) => field.onChange(url)}
+                                        onRemove={() => field.onChange("")}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <div className="grid grid-cols-3 gap-8">
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="label"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>Label</FormLabel>
                                     <FormControl>
                                         <Input
                                             disabled={loading}
-                                            placeholder="Store name"
+                                            placeholder="Billboard label"
                                             {...field}
                                         />
                                     </FormControl>
@@ -127,18 +162,13 @@ const SettingsForm: React.FC<ISettingsFormProps> = ({
                         className="ml-auto"
                         type="submit"
                     >
-                        Save changes
+                        {action}
                     </Button>
                 </form>
             </Form>
             <Separator />
-            <ApiAlert
-                title="NEXT_PUBLIC_API_URL"
-                description={`${origin}/api/${params.storeId}`}
-                variant="public"
-            />
         </>
     );
 };
 
-export default SettingsForm;
+export default BillboardForm;
