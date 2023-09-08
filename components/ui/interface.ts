@@ -5,3 +5,14 @@ export interface IModalProps {
     onClose: () => void;
     children?: React.ReactNode;
 }
+
+export interface IHeadingProps {
+    title: string;
+    description: string;
+}
+
+export interface IApiAlertProps {
+    title: string;
+    description: string;
+    variant: "public" | "admin";
+}
