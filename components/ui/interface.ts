@@ -23,3 +23,8 @@ export interface IImageUploadProps {
     onRemove: (value: string) => void;
     value: string[];
 }
+
+export interface IApiListProps {
+    entityName: string;
+    entityIdName: string;
+}
