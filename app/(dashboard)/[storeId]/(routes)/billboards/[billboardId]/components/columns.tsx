@@ -1,0 +1,21 @@
+"use client";
+
+import { ColumnDef } from "@tanstack/react-table";
+
+import { IBillboardColumn } from "./interface";
+import CellAction from "./cell-action";
+
+export const columns: ColumnDef<IBillboardColumn>[] = [
+    {
+        accessorKey: "label",
+        header: "Label",
+    },
+    {
+        accessorKey: "createdAt",
+        header: "Date",
+    },
+    {
+        id: "actions",
+        cell: ({ row }) => <CellAction data={row.original} />
+    }
+];

@@ -10,13 +10,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import AlertModal from "@/components/modals/alert-modal";
-import { useOrigin } from "@/hooks/use-origin";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import ImageUpload from "@/components/ui/image-upload";
-import ApiAlert from "@/components/ui/api-alert";
 import {
     Form,
     FormControl,
@@ -40,7 +38,6 @@ const BillboardForm: React.FC<IBillboardFormProps> = ({
 }: IBillboardFormProps) => {
     const params = useParams();
     const router = useRouter();
-    const origin = useOrigin();
     const [open, setOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -166,7 +163,6 @@ const BillboardForm: React.FC<IBillboardFormProps> = ({
                     </Button>
                 </form>
             </Form>
-            <Separator />
         </>
     );
 };
