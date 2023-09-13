@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { IBillboardColumn } from "./interface";
+import { IBillboardColumn } from "../[billboardId]/components/interface";
 import CellAction from "./cell-action";
 
 export const columns: ColumnDef<IBillboardColumn>[] = [
