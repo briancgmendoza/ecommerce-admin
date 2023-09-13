@@ -19,7 +19,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-import { ICellAction } from "./interface";
+import { ICellAction } from "../[billboardId]/components/interface";
 import { useState } from "react";
 import AlertModal from "@/components/modals/alert-modal";
 
@@ -33,7 +33,7 @@ const CellAction: React.FC<ICellAction> = ({
 
     const onCopy = (id: string) => {
         navigator.clipboard.writeText(id);
-        toast.success("Billboard id copied to clipboard");
+        toast.success("Billboard id copied to clipboard.");
     };
 
     const onDelete = async () => {
