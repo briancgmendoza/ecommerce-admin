@@ -14,7 +14,6 @@ import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import ImageUpload from "@/components/ui/image-upload";
 import {
     Form,
     FormControl,
@@ -77,7 +76,7 @@ const SizeForm: React.FC<ISizeFormProps> = ({
             setLoading(true);
             await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`);
             router.refresh();
-            router.push("/");
+            router.push(`/${params.storeId}/sizes`);
             toast.success("Size deleted.");
         } catch (error) {
             toast.error("Make sure you removed all products using this size first.");

@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { ISizeColumn } from "../[sizesId]/components/interface";
+import { ISizeColumn } from "../[sizeId]/components/interface";
 import CellAction from "./cell-action";
 
 export const columns: ColumnDef<ISizeColumn>[] = [

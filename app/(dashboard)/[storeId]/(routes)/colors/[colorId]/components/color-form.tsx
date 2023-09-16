@@ -15,13 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
-import {
     Form,
     FormControl,
     FormField,
@@ -30,47 +23,48 @@ import {
     FormMessage
 } from "@/components/ui/form";
 
-import { ICategoryFormProps } from "./interface";
+import { IColorFormProps } from "./interface";
 
 const formSchema = z.object({
     name: z.string().min(1),
-    billboardId: z.string().min(1)
+    value: z.string().min(4).regex(/^#/, {
+        message: "String must be a valid hex code"
+    })
 });
 
-type CategoryFormValues = z.infer<typeof formSchema>;
+type ColorFormValues = z.infer<typeof formSchema>;
 
-const CategoryForm: React.FC<ICategoryFormProps> = ({
-    initialData,
-    billboards
-}: ICategoryFormProps) => {
+const ColorForm: React.FC<IColorFormProps> = ({
+    initialData
+}: IColorFormProps) => {
     const params = useParams();
     const router = useRouter();
     const [open, setOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const title = initialData ? "Edit category" : "Create category";
-    const description = initialData ? "Edit category" : "Add a new category";
-    const toastMessage = initialData ? "Category updated." : "Category created.";
+    const title = initialData ? "Edit color" : "Create color";
+    const description = initialData ? "Edit a color" : "Add a new color";
+    const toastMessage = initialData ? "Color updated." : "Color created.";
     const action = initialData ? "Save changes" : "Create";
 
-    const form = useForm<CategoryFormValues>({
+    const form = useForm<ColorFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: initialData || {
             name: '',
-            billboardId: ''
+            value: ''
         }
     });
 
-    const onSubmit = async (data: CategoryFormValues) => {
+    const onSubmit = async (data: ColorFormValues) => {
         try {
             setLoading(true);
             if (initialData) {
-                await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data);
+                await axios.patch(`/api/${params.storeId}/colors/${params.colorId}`, data);
             } else {
-                await axios.post(`/api/${params.storeId}/categories`, data);
+                await axios.post(`/api/${params.storeId}/colors`, data);
             }
             router.refresh();
-            router.push(`/${params.storeId}/categories`);
+            router.push(`/${params.storeId}/colors`);
             toast.success(toastMessage);
         } catch (error) {
             toast.error("Something went wrong");
@@ -82,12 +76,12 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({
     const onDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`);
+            await axios.delete(`/api/${params.storeId}/colors/${params.colorId}`);
             router.refresh();
-            router.push(`/${params.storeId}/categories`);
-            toast.success("Category deleted.");
+            router.push(`/${params.storeId}/colors`);
+            toast.success("Color deleted.");
         } catch (error) {
-            toast.error("Make sure you removed all products using this category first.");
+            toast.error("Make sure you removed all products using this color first.");
         } finally {
             setLoading(false);
             setOpen(false);
@@ -111,7 +105,7 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({
                     <Button
                         disabled={loading}
                         variant="destructive"
-                        size="sm"
+                        size="icon"
                         onClick={() => setOpen(true)}
                     >
                         <Trash className="h-4 w-4" />
@@ -134,7 +128,7 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({
                                     <FormControl>
                                         <Input
                                             disabled={loading}
-                                            placeholder="Category name"
+                                            placeholder="Color name"
                                             {...field}
                                         />
                                     </FormControl>
@@ -144,35 +138,23 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({
                         />
                         <FormField
                             control={form.control}
-                            name="billboardId"
+                            name="value"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Billboard</FormLabel>
-                                    <Select
-                                        disabled={loading}
-                                        onValueChange={field.onChange}
-                                        value={field.value}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue
-                                                    defaultValue={field.value}
-                                                    placeholder="Select a billboard"
-                                                />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {billboards.map((billboard) => (
-                                                <SelectItem
-                                                    key={billboard.id}
-                                                    value={billboard.id}
-                                                >
-                                                    {billboard.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <FormLabel>Value</FormLabel>
+                                    <FormControl>
+                                        <div className="flex items-center gap-x-4">
+                                            <Input
+                                                disabled={loading}
+                                                placeholder="Color value"
+                                                {...field}
+                                            />
+                                            <div
+                                                className="border p-4 rounded-full"
+                                                style={{ backgroundColor: field.value }}
+                                            />
+                                        </div>
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -191,4 +173,4 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({
     );
 };
 
-export default CategoryForm;
+export default ColorForm;
