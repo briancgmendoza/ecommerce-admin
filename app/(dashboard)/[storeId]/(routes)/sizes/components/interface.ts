@@ -1,4 +1,4 @@
-import { ISizeColumn } from "../[sizesId]/components/interface";
+import { ISizeColumn } from "../[sizeId]/components/interface";
 
 export interface ISizeClientProps {
     data: ISizeColumn[];
